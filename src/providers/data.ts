@@ -1,13 +1,10 @@
-// import { createSimpleRestDataProvider } from "@refinedev/rest/simple-rest";
-// import { API_URL } from "./constants";
-// export const { dataProvider, kyInstance } = createSimpleRestDataProvider({
-//   apiURL: API_URL,
-// });
-
-
 import { BACKEND_BASE_URL } from "@/constants";
 import { ListResponse } from "@/types";
 import { CreateDataProviderOptions, createDataProvider } from "@refinedev/rest";
+
+if (!BACKEND_BASE_URL) {
+  throw new Error("BACKEND_BASE_URL is not defined in environment variables. Pls set VITE_BACKEND_BASE_URL in your .env file.");
+}
 
 
 const options: CreateDataProviderOptions = {
@@ -37,12 +34,12 @@ const options: CreateDataProviderOptions = {
     },
 
     mapResponse: async (response) => {
-      const payload: ListResponse = await response.json();
+      const payload: ListResponse = await response.clone().json();
       return payload.data ?? [];
     },
 
     getTotalCount: async (response) => {
-      const payload: ListResponse = await response.json();
+      const payload: ListResponse = await response.clone().json();
       return payload.pagination?.total ?? payload.data?.length ?? 0;
     }
   }
